@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生日卡片</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(45deg, #ffafbd, #ffc3a0);
+            overflow: hidden;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        /* 禮物盒樣式 */
+        .gift-container {
+            position: relative;
+            width: 260px;
+            height: 190px;
+            cursor: pointer;
+            z-index: 10;
+            transition: transform 0.3s ease;
+        }
+
+        .gift-container:hover {
+            transform: scale(1.05);
+        }
+
+        .gift-box {
+            position: absolute;
+            width: 220px;
+            height: 140px;
+            background: linear-gradient(135deg, #ff85a2, #ff5c8d);
+            bottom: 0;
+            left: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2),
+                        inset 0 -10px 15px rgba(0, 0, 0, 0.1),
+                        inset 2px 2px 5px rgba(255, 255, 255, 0.5);
+            overflow: hidden; /* 確保內容不會溢出 */
+        }
+
+        /* 將盒蓋和蝴蝶結組合起來 */
+        .lid-with-bow {
+            position: absolute;
+            width: 240px;
+            height: 40px;
+            top: 10px;
+            left: 10px;
+            transform-origin: left center;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 5;
+        }
+
+        .gift-lid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff96b3, #ff6e9a);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2),
+                        inset 0 1px 5px rgba(255, 255, 255, 0.5);
+        }
+
+        /* 蝴蝶結樣式 - 附著在盒蓋上 */
+        .bow {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            top: -12px;
+            left: 97px;
+            z-index: 6;
+        }
+
+        .bow-left, .bow-right {
+            position: absolute;
+            width: 30px;
+            height: 40px;
+            background: linear-gradient(135deg, #d81b60, #c2185b);
+            top: 0;
+            border-radius: 50px 50px 0 50px;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2),
+                        inset 1px 1px 3px rgba(255, 255, 255, 0.3);
+        }
+
+        .bow-left {
+            left: -15px;
+            transform: rotate(-30deg);
+        }
+
+        .bow-right {
+            right: -15px;
+            transform: rotate(30deg) scaleX(-1);
+        }
+
+        .bow-center {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(135deg, #ad1457, #880e4f);
+            border-radius: 50%;
+            top: 12px;
+            left: 14px;
+            z-index: 5;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2),
+                        inset 1px 1px 2px rgba(255, 255, 255, 0.3);
+        }
+
+        /* 草莓裝飾 */
+        .strawberry {
+            position: absolute;
+            top: 10px;
+            left: 150px;
+            width: 20px;
+            height: 25px;
+            z-index: 6;
+        }
+
+        .strawberry-body {
+            position: absolute;
+            width: 20px;
+            height: 25px;
+            background: #e91e63;
+            border-radius: 50% 50% 60% 60% / 60% 60% 40% 40%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2),
+                       inset 2px 2px 4px rgba(255,255,255,0.3);
+        }
+
+        .strawberry-seed {
+            position: absolute;
+            width: 2px;
+            height: 3px;
+            background: #ffeb3b;
+            border-radius: 50%;
+        }
+
+        .strawberry-seed:nth-child(1) {
+            top: 6px;
+            left: 6px;
+        }
+
+        .strawberry-seed:nth-child(2) {
+            top: 14px;
+            left: 4px;
+        }
+
+        .strawberry-seed:nth-child(3) {
+            top: 8px;
+            left: 12px;
+        }
+
+        .strawberry-seed:nth-child(4) {
+            top: 18px;
+            left: 10px;
+        }
+
+        .strawberry-top {
+            position: absolute;
+            top: -5px;
+            left: 5px;
+            width: 10px;
+            height: 8px;
+            background: #4caf50;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        /* 櫻桃裝飾 */
+        .cherry {
+            position: absolute;
+            top: 10px;
+            left: 40px;
+            width: 25px;
+            height: 25px;
+            z-index: 6;
+        }
+
+        .cherry-berry {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #c51d34;
+            border-radius: 50%;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.2),
+                       inset 2px 2px 3px rgba(255,255,255,0.3);
+        }
+
+        .cherry-berry:first-child {
+            left: 0;
+        }
+
+        .cherry-berry:nth-child(2) {
+            left: 8px;
+        }
+
+        .cherry-stem {
+            position: absolute;
+            width: 2px;
+            height: 10px;
+            background: #2e7d32;
+            top: -8px;
+            left: 6px;
+            transform: rotate(-10deg);
+        }
+
+        .ribbon {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+        }
+
+        .ribbon-vertical {
+            position: absolute;
+            width: 15px;
+            height: 140px;
+            background: linear-gradient(to right, #d81b60, #c2185b);
+            top: 50px;
+            left: 122px;
+            z-index: 1;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .ribbon-horizontal {
+            position: absolute;
+            width: 220px;
+            height: 15px;
+            background: linear-gradient(to bottom, #d81b60, #c2185b);
+            top: 82px;
+            left: 20px;
+            z-index: 1;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .click-me {
+            position: absolute;
+            bottom: -35px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        /* 定義盒子開口區域 */
+        .box-opening {
+            position: absolute;
+            width: 220px;
+            height: 40px;
+            top: 0;
+            left: 0;
+            overflow: visible;
+            z-index: 2;
+        }
+
+        /* 地板區域 */
+        .floor {
+            position: absolute;
+            width: 100%;
+            height: 20px;
+            background: transparent;
+            bottom: -10px;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* 裝飾元素 */
+        .balloon {
+            position: absolute;
+            width: 45px;
+            height: 55px;
+            border-radius: 50%;
+            opacity: 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1),
+                        inset 5px 5px 10px rgba(255, 255, 255, 0.2),
+                        inset -5px -5px 10px rgba(0, 0, 0, 0.1);
+            z-index: 4;
+        }
+
+        .balloon::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.7);
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) translateX(0);
+            }
+            100% {
+                transform: translateY(-2000px) translateX(var(--x-move));
+            }
+        }
+
+        .happy-birthday {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            font-family: 'Pacifico', cursive;
+            font-size: 48px;
+            color: white;
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            line-height: 1.2;
+            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 20;
+        }
+
+        /* 紙屑樣式 */
+        .confetti {
+            position: absolute;
+            opacity: 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 4;
+            transform-origin: center center;
+        }
+
+        /* 底部陰影 */
+        .shadow {
+            position: absolute;
+            width: 220px;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.1);
+            bottom: -20px;
+            left: 20px;
+            border-radius: 50%;
+            filter: blur(10px);
+        }
+    </style>
+</head>
+<body>
+    <div class="card" id="card">
+        <div class="happy-birthday" id="happyBirthday">Happy Birthday!<br>T1!</div>
+        
+        <div class="gift-container" id="giftContainer">
+            <div class="click-me" id="clickMe">Click Me!</div>
+            
+            <!-- 將蓋子和蝴蝶結組合在一起 -->
+            <div class="lid-with-bow" id="lidWithBow">
+                <div class="gift-lid"></div>
+                <div class="bow">
+                    <div class="bow-left"></div>
+                    <div class="bow-right"></div>
+                    <div class="bow-center"></div>
+                </div>
+                <!-- 添加櫻桃和草莓裝飾 -->
+                <div class="strawberry">
+                    <div class="strawberry-body">
+                        <div class="strawberry-seed"></div>
+                        <div class="strawberry-seed"></div>
+                        <div class="strawberry-seed"></div>
+                        <div class="strawberry-seed"></div>
+                    </div>
+                    <div class="strawberry-top"></div>
+                </div>
+                <div class="cherry">
+                    <div class="cherry-stem"></div>
+                    <div class="cherry-berry"></div>
+                    <div class="cherry-berry"></div>
+                </div>
+            </div>
+            
+            <div class="gift-box">
+                <!-- 添加盒子開口區域，用於創建氣球和紙屑 -->
+                <div class="box-opening" id="boxOpening"></div>
+            </div>
+            <div class="shadow"></div>
+            
+            <!-- 緞帶裝飾 -->
+            <div class="ribbon">
+                <div class="ribbon-vertical"></div>
+                <div class="ribbon-horizontal"></div>
+            </div>
+        </div>
+        
+        <!-- 添加地板區域，用於紙屑落下 -->
+        <div class="floor" id="floor"></div>
+    </div>
+
+    <script>
+        // 確保DOM完全載入後執行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 獲取元素引用
+            const giftContainer = document.getElementById('giftContainer');
+            const lidWithBow = document.getElementById('lidWithBow');
+            const happyBirthday = document.getElementById('happyBirthday');
+            const clickMe = document.getElementById('clickMe');
+            const card = document.getElementById('card');
+            const boxOpening = document.getElementById('boxOpening');
+            const floor = document.getElementById('floor');
+            
+            // 氣球顏色
+            const balloonColors = [
+                'radial-gradient(circle at 30% 30%, #FF7B7B, #FF5757)',
+                'radial-gradient(circle at 30% 30%, #FF8AD8, #FF66C4)',
+                'radial-gradient(circle at 30% 30%, #7B94FF, #5D7CFF)',
+                'radial-gradient(circle at 30% 30%, #5ACBFF, #38B6FF)',
+                'radial-gradient(circle at 30% 30%, #A673FF, #8C52FF)',
+                'radial-gradient(circle at 30% 30%, #7DEBF0, #5CE1E6)',
+                'radial-gradient(circle at 30% 30%, #25E0C1, #00C2A8)',
+                'radial-gradient(circle at 30% 30%, #FFAA6C, #FF914D)'
+            ];
+            
+            let isOpened = false;
+            let isAnimating = false;
+            
+            // 直接在禮物盒上添加點擊事件
+            giftContainer.onclick = function() {
+                // 如果動畫正在進行中，不重新觸發
+                if (isAnimating) return;
+                
+                // 如果之前已經打開過，則重置並重新播放
+                if (isOpened) {
+                    resetGift();
+                }
+                
+                openGift();
+            };
+            
+            // 打開禮物盒的函數
+            function openGift() {
+                if (isAnimating) return;
+                isAnimating = true;
+                
+                // 隱藏提示文字
+                clickMe.style.opacity = '0';
+                
+                // 打開盒蓋，使其轉向左側並稍微上移
+                // 這樣設計可以確保盒蓋不會擋住盒口，又有自然的動畫效果
+                lidWithBow.style.transform = 'rotate(-110deg) translateY(-20px)';
+                
+                // 顯示生日祝福
+                setTimeout(() => {
+                    happyBirthday.style.opacity = '1';
+                    happyBirthday.style.transform = 'translate(-50%, -200px) scale(1)';
+                }, 400);
+                
+                // 放出氣球 - 從盒口出現
+                for (let i = 0; i < 12; i++) {
+                    setTimeout(() => createBalloon(i), i * 100 + 300);
+                }
+                
+                // 噴灑紙屑 - 從盒口出現，使用更自然的方式
+                setTimeout(() => {
+                    sprayConfetti();
+                }, 300);
+                
+                // 標記盒子已打開
+                isOpened = true;
+                
+                // 動畫完成後，允許再次點擊
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 2000); // 給予足夠時間讓主要動畫開始
+            }
+            
+            // 重置禮物盒狀態的函數
+            function resetGift() {
+                // 移除所有現有的氣球和紙屑
+                document.querySelectorAll('.balloon, .confetti').forEach(element => {
+                    element.remove();
+                });
+                
+                // 重置生日祝福文字
+                happyBirthday.style.opacity = '0';
+                happyBirthday.style.transform = 'translate(-50%, -50%) scale(0)';
+                
+                // 重置盒蓋位置
+                lidWithBow.style.transform = '';
+                
+                // 重新顯示提示文字
+                clickMe.style.opacity = '1';
+            }
+            
+            // 創建氣球 - 從盒口出現，並持續向上飄動
+            function createBalloon(i) {
+                const balloon = document.createElement('div');
+                balloon.classList.add('balloon');
+                balloon.style.background = balloonColors[i % balloonColors.length];
+                
+                // 將氣球附加到頁面，以便獲取其尺寸
+                card.appendChild(balloon);
+                
+                // 獲取禮物盒和盒口的位置
+                const giftBoxRect = document.querySelector('.gift-box').getBoundingClientRect();
+                const cardRect = card.getBoundingClientRect();
+                
+                // 計算盒口中心位置
+                const boxCenterX = giftBoxRect.left + giftBoxRect.width / 2 - cardRect.left;
+                const boxTop = giftBoxRect.top - cardRect.top + 20; // 盒口頂部加上一點偏移
+                
+                // 考慮氣球尺寸，讓氣球中心在盒口中心
+                const balloonWidth = 45; // 氣球寬度
+                
+                // 更大的水平偏移，使氣球更分散
+                // 根據索引i決定偏移方向，使氣球更均勻分散
+                let offsetDirection = (i % 2 === 0) ? 1 : -1; // 偶數氣球向右，奇數向左
+                let offsetDistance = 10 + (Math.floor(i / 2) * 15); // 根據索引增加偏移距離
+                const offset = offsetDirection * offsetDistance + (Math.random() - 0.5) * 30; // 添加少量隨機性
+                
+                balloon.style.left = `${boxCenterX - balloonWidth/2 + offset}px`;
+                balloon.style.top = `${boxTop}px`;
+                
+                // 設置氣球的水平移動量作為CSS變量 - 增加範圍使其更分散
+                const xMove = offset * 2 + (Math.random() - 0.5) * 300; // 更大的範圍
+                balloon.style.setProperty('--x-move', `${xMove}px`);
+                
+                // 讓氣球淡入並開始動畫
+                requestAnimationFrame(() => {
+                    balloon.style.opacity = '1';
+                    
+                    // 使用CSS關鍵幀動畫使氣球持續上升 - 隨機速度
+                    balloon.style.animation = `floatUp ${10 + Math.random() * 15}s linear forwards`;
+                    
+                    // 為不同氣球設置不同的動畫延遲，使其看起來更自然
+                    balloon.style.animationDelay = `${i * 0.1 + Math.random() * 0.2}s`;
+                });
+                
+                // 在動畫結束後移除氣球元素
+                setTimeout(() => {
+                    balloon.remove();
+                }, 25000); // 確保有足夠時間完成動畫
+            }
+            
+            // 使用物理模擬創建更自然的紙屑噴灑效果
+            function sprayConfetti() {
+                const TOTAL_CONFETTI_COUNT = 100;  // 紙屑總數量
+                const BURST_POWER = 15;      // 爆發力度
+                const GRAVITY = 0.25;        // 重力
+                const AIR_RESISTANCE = 0.98; // 空氣阻力
+                
+                // 分批创建紙屑，每批紙屑更自然
+                const BATCHES = 3;  // 分3批
+                const CONFETTI_PER_BATCH = Math.floor(TOTAL_CONFETTI_COUNT / BATCHES);
+                
+                // 獲取禮物盒和盒口的位置
+                const giftBoxRect = document.querySelector('.gift-box').getBoundingClientRect();
+                const cardRect = card.getBoundingClientRect();
+                
+                // 計算盒口的中心、左邊緣、右邊緣和頂部位置
+                const boxLeft = giftBoxRect.left - cardRect.left;
+                const boxWidth = giftBoxRect.width;
+                const boxCenterX = boxLeft + boxWidth / 2;
+                const boxTop = giftBoxRect.top - cardRect.top + 5; // 確保在盒口頂部
+                
+                // 每一批的創建紙屑函數
+                function createBatchConfetti(batchIndex) {
+                    // 創建當前批次的紙屑元素
+                    const confettis = [];
+                    
+                    for (let i = 0; i < CONFETTI_PER_BATCH; i++) {
+                        const confetti = document.createElement('div');
+                        confetti.classList.add('confetti');
+                        
+                        // 隨機大小 - 第一批略大，增加視覺衝擊
+                        const sizeMultiplier = batchIndex === 0 ? 1.2 : 1;
+                        const size = (3 + Math.random() * 5) * sizeMultiplier;
+                        confetti.style.width = `${size}px`;
+                        confetti.style.height = `${size}px`;
+                        
+                        // 隨機顏色
+                        const colorIndex = Math.floor(Math.random() * balloonColors.length);
+                        let baseColor;
+                        
+                        // 使用純色而非漸變
+                        switch (colorIndex) {
+                            case 0: baseColor = '#FF5757'; break;
+                            case 1: baseColor = '#FF66C4'; break;
+                            case 2: baseColor = '#5D7CFF'; break;
+                            case 3: baseColor = '#38B6FF'; break;
+                            case 4: baseColor = '#8C52FF'; break;
+                            case 5: baseColor = '#5CE1E6'; break;
+                            case 6: baseColor = '#00C2A8'; break;
+                            case 7: baseColor = '#FF914D'; break;
+                            default: baseColor = '#FF5757';
+                        }
+                        
+                        confetti.style.background = baseColor;
+                        
+                        // 隨機形狀
+                        const shapes = ['circle', 'square', 'triangle'];
+                        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+                        
+                        if (shape === 'circle') {
+                            confetti.style.borderRadius = '50%';
+                        } else if (shape === 'triangle') {
+                            confetti.style.width = '0';
+                            confetti.style.height = '0';
+                            confetti.style.borderLeft = `${size/2}px solid transparent`;
+                            confetti.style.borderRight = `${size/2}px solid transparent`;
+                            confetti.style.borderBottom = `${size}px solid ${baseColor}`;
+                            confetti.style.background = 'transparent';
+                        }
+                        
+                        // 將紙屑添加到DOM
+                        card.appendChild(confetti);
+                        
+                        // 從盒口隨機位置開始，確保在盒口範圍內
+                        // 第一批主要從中心噴出，後續批次更分散
+                        const spreadFactor = 0.6 + (batchIndex * 0.2); // 0.6, 0.8, 1.0
+                        const maxOffset = boxWidth * spreadFactor;
+                        const startX = boxCenterX + (Math.random() - 0.5) * maxOffset;
+                        
+                        // 設置紙屑的初始位置 - 確保在盒口
+                        confetti.style.left = `${Math.max(boxLeft, Math.min(boxLeft + boxWidth, startX))}px`;
+                        confetti.style.top = `${boxTop}px`;
+                        
+                        // 設置初始不透明度為0
+                        confetti.style.opacity = '0';
+                        
+                        // 為每個紙屑添加物理屬性
+                        // 計算紙屑在盒口的相對位置(0到1)
+                        const relativePosition = (startX - boxLeft) / boxWidth;
+                        
+                        // 根據紙屑位置調整噴出角度
+                        let angle;
+                        if (relativePosition < 0.3) {
+                            // 左側：向左上方噴出
+                            angle = Math.PI * (0.7 + Math.random() * 0.2);
+                        } else if (relativePosition > 0.7) {
+                            // 右側：向右上方噴出
+                            angle = Math.PI * (0.1 + Math.random() * 0.2);
+                        } else {
+                            // 中間：主要向上噴出
+                            angle = Math.PI * (0.4 + Math.random() * 0.2);
+                        }
+                        
+                        // 每批的爆發力度不同 - 第一批最強
+                        const batchPowerFactor = 1 - (batchIndex * 0.2); // 1.0, 0.8, 0.6
+                        const speed = Math.random() * BURST_POWER * batchPowerFactor * (0.7 + 0.6 * Math.random());
+                        
+                        // 隨機旋轉速度
+                        const rotationSpeed = (Math.random() - 0.5) * 20;
+                        
+                        // 基於角度計算速度分量
+                        let vx = Math.cos(angle) * speed;
+                        let vy = -Math.sin(angle) * speed; // 負號使紙屑向上飛
+                        
+                        // 存儲物理屬性及初始位置
+                        confettis.push({
+                            element: confetti,
+                            x: parseFloat(confetti.style.left),
+                            y: parseFloat(confetti.style.top),
+                            vx: vx,
+                            vy: vy,
+                            rotation: 0,
+                            rotationSpeed: rotationSpeed
+                        });
+                    }
+                    
+                    // 使所有紙屑可見
+                    requestAnimationFrame(() => {
+                        confettis.forEach(confetti => {
+                            confetti.element.style.opacity = '1';
+                        });
+                    });
+                    
+                    // 紙屑動畫函數
+                    function animateConfetti() {
+                        let anyMoving = false;
+                        
+                        confettis.forEach(confetti => {
+                            // 更新位置和速度
+                            confetti.x += confetti.vx;
+                            confetti.y += confetti.vy;
+                            confetti.rotation += confetti.rotationSpeed;
+                            
+                            // 應用重力
+                            confetti.vy += GRAVITY;
+                            
+                            // 應用空氣阻力
+                            confetti.vx *= AIR_RESISTANCE;
+                            confetti.vy *= AIR_RESISTANCE;
+                            
+                            // 設置新位置和旋轉
+                            confetti.element.style.transform = `translate(${confetti.x - parseFloat(confetti.element.style.left)}px, ${confetti.y - parseFloat(confetti.element.style.top)}px) rotate(${confetti.rotation}deg)`;
+                            
+                            // 檢查紙屑是否還在移動
+                            if (Math.abs(confetti.vx) > 0.1 || Math.abs(confetti.vy) > 0.1) {
+                                anyMoving = true;
+                            }
+                            
+                            // 檢查紙屑是否到達底部
+                            const cardHeight = card.clientHeight;
+                            if (confetti.y > cardHeight) {
+                                // 讓紙屑在底部停止
+                                confetti.y = cardHeight;
+                                confetti.vy = 0;
+                                confetti.vx = 0;
+                                confetti.rotationSpeed = 0;
+                            }
+                        });
+                        
+                        // 繼續動畫循環，直到所有紙屑停止移動
+                        if (anyMoving) {
+                            requestAnimationFrame(animateConfetti);
+                        }
+                    }
+                    
+                    // 開始當前批次的動畫
+                    animateConfetti();
+                    
+                    // 設置一個延遲，在紙屑停止後移除
+                    setTimeout(() => {
+                        confettis.forEach(confetti => {
+                            confetti.element.remove();
+                        });
+                    }, 10000);
+                }
+                
+                // 按批次延遲創建紙屑
+                for (let batch = 0; batch < BATCHES; batch++) {
+                    setTimeout(() => {
+                        createBatchConfetti(batch);
+                    }, batch * 200); // 每批間隔200ms
+                }
+            }
+            
+        });
+    </script>
+</body>
+</html>
