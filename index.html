@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生日卡片</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(45deg, #ffafbd, #ffc3a0);
+            overflow: hidden;
+        }
+
+        .card {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        .gift-container {
+            position: relative;
+            width: 260px;
+            height: 190px;
+            cursor: pointer;
+            z-index: 10;
+            transition: transform 0.3s ease;
+        }
+
+        .gift-container:hover {
+            transform: scale(1.05);
+        }
+
+        .gift-box {
+            position: absolute;
+            width: 220px;
+            height: 140px;
+            background: linear-gradient(135deg, #ff85a2, #ff5c8d);
+            bottom: 0;
+            left: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2),
+                        inset 0 -10px 15px rgba(0, 0, 0, 0.1),
+                        inset 2px 2px 5px rgba(255, 255, 255, 0.5);
+            overflow: hidden;
+        }
+
+        .lid-with-bow {
+            position: absolute;
+            width: 240px;
+            height: 40px;
+            top: 10px;
+            left: 10px;
+            transform-origin: left center;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 5;
+        }
+
+        .gift-lid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff96b3, #ff6e9a);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2),
+                        inset 0 1px 5px rgba(255, 255, 255, 0.5);
+        }
+
+        .bow {
+            position: absolute;
+            width: 45px;
+            height: 45px;
+            top: -12px;
+            left: 97px;
+            z-index: 6;
+        }
+
+        .bow-left, .bow-right {
+            position: absolute;
+            width: 30px;
+            height: 40px;
+            background: linear-gradient(135deg, #d81b60, #c2185b);
+            top: 0;
+            border-radius: 50px 50px 0 50px;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2),
+                        inset 1px 1px 3px rgba(255, 255, 255, 0.3);
+        }
+
+        .bow-left {
+            left: -15px;
+            transform: rotate(-30deg);
+        }
+
+        .bow-right {
+            right: -15px;
+            transform: rotate(30deg) scaleX(-1);
+        }
+
+        .bow-center {
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(135deg, #ad1457, #880e4f);
+            border-radius: 50%;
+            top: 12px;
+            left: 14px;
+            z-index: 5;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.2),
+                        inset 1px 1px 2px rgba(255, 255, 255, 0.3);
+        }
+
+        .strawberry {
+            position: absolute;
+            top: 10px;
+            left: 150px;
+            width: 20px;
+            height: 25px;
+            z-index: 6;
+        }
+
+        .strawberry-body {
+            position: absolute;
+            width: 20px;
+            height: 25px;
+            background: #e91e63;
+            border-radius: 50% 50% 60% 60% / 60% 60% 40% 40%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2),
+                       inset 2px 2px 4px rgba(255,255,255,0.3);
+        }
+
+        .strawberry-seed {
+            position: absolute;
+            width: 2px;
+            height: 3px;
+            background: #ffeb3b;
+            border-radius: 50%;
+        }
+
+        .strawberry-seed:nth-child(1) {
+            top: 6px;
+            left: 6px;
+        }
+
+        .strawberry-seed:nth-child(2) {
+            top: 14px;
+            left: 4px;
+        }
+
+        .strawberry-seed:nth-child(3) {
+            top: 8px;
+            left: 12px;
+        }
+
+        .strawberry-seed:nth-child(4) {
+            top: 18px;
+            left: 10px;
+        }
+
+        .strawberry-top {
+            position: absolute;
+            top: -5px;
+            left: 5px;
+            width: 10px;
+            height: 8px;
+            background: #4caf50;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        .cherry {
+            position: absolute;
+            top: 10px;
+            left: 40px;
+            width: 25px;
+            height: 25px;
+            z-index: 6;
+        }
+
+        .cherry-berry {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #c51d34;
+            border-radius: 50%;
+            box-shadow: 0 2px 3px rgba(0,0,0,0.2),
+                       inset 2px 2px 3px rgba(255,255,255,0.3);
+        }
+
+        .cherry-berry:first-child {
+            left: 0;
+        }
+
+        .cherry-berry:nth-child(2) {
+            left: 8px;
+        }
+
+        .cherry-stem {
+            position: absolute;
+            width: 2px;
+            height: 10px;
+            background: #2e7d32;
+            top: -8px;
+            left: 6px;
+            transform: rotate(-10deg);
+        }
+
+        .ribbon {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+        }
+
+        .ribbon-vertical {
+            position: absolute;
+            width: 15px;
+            height: 140px;
+            background: linear-gradient(to right, #d81b60, #c2185b);
+            top: 50px;
+            left: 122px;
+            z-index: 1;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .ribbon-horizontal {
+            position: absolute;
+            width: 220px;
+            height: 15px;
+            background: linear-gradient(to bottom, #d81b60, #c2185b);
+            top: 82px;
+            left: 20px;
+            z-index: 1;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .click-me {
+            position: absolute;
+            bottom: -35px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.1); }
+        }
+
+        .box-opening {
+            position: absolute;
+            width: 220px;
+            height: 40px;
+            top: 0;
+            left: 0;
+            overflow: visible;
+            z-index: 2;
+        }
+
+        .floor {
+            position: absolute;
+            width: 100%;
+            height: 20px;
+            background: transparent;
+            bottom: -10px;
+            left: 0;
+            z-index: 1;
+        }
+
+        .balloon {
+            position: absolute;
+            width: 45px;
+            height: 55px;
+            border-radius: 50%;
+            opacity: 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1),
+                        inset 5px 5px 10px rgba(255, 255, 255, 0.2),
+                        inset -5px -5px 10px rgba(0, 0, 0, 0.1);
+            z-index: 4;
+        }
+
+        .balloon::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.7);
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) translateX(0);
+            }
+            100% {
+                transform: translateY(-2000px) translateX(var(--x-move));
+            }
+        }
+
+        .happy-birthday {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            font-family: 'Pacifico', cursive;
+            font-size: 48px;
+            color: white;
+            text-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            line-height: 1.2;
+            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 20;
+        }
+
+        .confetti {
+            position: absolute;
+            opacity: 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 4;
+            transform-origin: center center;
+        }
+
+        .shadow {
+            position: absolute;
+            width: 220px;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.1);
+            bottom: -20px;
+            left: 20px;
+            border-radius: 50%;
+            filter: blur(10px);
+        }
+
+        /* 照片樣式 - 調整後的版本 */
+        .photo-container {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            width: 350px;
+            height: 350px;
+            opacity: 0;
+            transform: scale(0) rotate(10deg);
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 15;
+            background: transparent; /* 完全透明的背景 */
+            padding: 0; /* 移除內邊距 */
+            border: none; /* 移除邊框 */
+            box-shadow: none; /* 移除陰影 */
+            overflow: visible; /* 允許內容溢出 */
+        }
+
+        .photo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* 改為 contain 以確保整張圖片都顯示 */
+            border-radius: 0;
+            background-color: transparent; /* 透明背景 */
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.15)); /* 直接給圖片添加陰影 */
+        }
+
+        .photo-container.show {
+            opacity: 1;
+            transform: scale(1) translateY(-20px) rotate(0deg);
+        }
+
+        /* 行動裝置調整 */
+        @media (max-width: 450px) {
+            .photo-container {
+                width: 320px;
+                height: 320px;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+    @keyframes spin {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .loading-indicator {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255, 105, 180, 0.3);
+        border-radius: 50%;
+        border-top: 3px solid #ff69b4;
+        animation: spin 1s linear infinite;
+    }
+    </style>
+</head>
+<body>
+    <div class="card" id="card">
+        <div class="happy-birthday" id="happyBirthday">Happy Birthday!<br>T1!</div>
+        
+        <div class="photo-container" id="photoContainer">
+            <img id="birthdayPhoto" alt="Birthday Photo" onerror="this.src='/api/placeholder/350/350'; this.alt='Photo Not Found';">
+        </div>
+        
+        <div class="gift-container" id="giftContainer">
+            <div class="click-me" id="clickMe">Click Me!</div>
+            
+            <div class="lid-with-bow" id="lidWithBow">
+                <div class="gift-lid"></div>
+                <div class="bow">
+                    <div class="bow-left"></div>
+                    <div class="bow-right"></div>
+                    <div class="bow-center"></div>
+                </div>
+                <div class="strawberry">
+                    <div class="strawberry-body">
+                        <div class="strawberry-seed"></div>
+                        <div class="strawberry-seed"></div>
+                        <div class="strawberry-seed"></div>
+                        <div class="strawberry-seed"></div>
+                    </div>
+                    <div class="strawberry-top"></div>
+                </div>
+                <div class="cherry">
+                    <div class="cherry-stem"></div>
+                    <div class="cherry-berry"></div>
+                    <div class="cherry-berry"></div>
+                </div>
+            </div>
+            
+            <div class="gift-box">
+                <div class="box-opening" id="boxOpening"></div>
+            </div>
+            <div class="shadow"></div>
+            
+            <div class="ribbon">
+                <div class="ribbon-vertical"></div>
+                <div class="ribbon-horizontal"></div>
+            </div>
+        </div>
+        
+        <div class="floor" id="floor"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const giftContainer = document.getElementById('giftContainer');
+            const lidWithBow = document.getElementById('lidWithBow');
+            const happyBirthday = document.getElementById('happyBirthday');
+            const clickMe = document.getElementById('clickMe');
+            const card = document.getElementById('card');
+            const boxOpening = document.getElementById('boxOpening');
+            const floor = document.getElementById('floor');
+            const photoContainer = document.getElementById('photoContainer');
+            const birthdayPhoto = document.getElementById('birthdayPhoto');
+
+            // 照片清單（20 張）
+            const photoList = [
+                'IMG_6535.png',
+                'IMG_6546.png',
+                'IMG_6548.png',
+                'IMG_6550.png',
+                'IMG_6552.png',
+                'IMG_6554.png',
+                'IMG_6569.png',
+                'IMG_6570.png',
+                'IMG_6571.png',
+                'IMG_6572.png',
+                'IMG_6573.png',
+                'IMG_6574.png',
+                'IMG_6575.png',
+                'IMG_6576.png',
+                'IMG_6577.png',
+                'IMG_6578.png',
+                'IMG_6579.png',
+                'IMG_6581.png',
+                'IMG_6583.png',
+                'IMG_6585.png'
+            ];
+            // 假設照片在 main 分支
+            const baseUrl = 'https://raw.githubusercontent.com/DanielHsueh-040201/happy-birthday/main/image/';
+            
+            // 記錄上次選的照片索引，防止連續重複
+            let lastPhotoIndex = -1;
+
+            const balloonColors = [
+                'radial-gradient(circle at 30% 30%, #FF7B7B, #FF5757)',
+                'radial-gradient(circle at 30% 30%, #FF8AD8, #FF66C4)',
+                'radial-gradient(circle at 30% 30%, #7B94FF, #5D7CFF)',
+                'radial-gradient(circle at 30% 30%, #5ACBFF, #38B6FF)',
+                'radial-gradient(circle at 30% 30%, #A673FF, #8C52FF)',
+                'radial-gradient(circle at 30% 30%, #7DEBF0, #5CE1E6)',
+                'radial-gradient(circle at 30% 30%, #25E0C1, #00C2A8)',
+                'radial-gradient(circle at 30% 30%, #FFAA6C, #FF914D)'
+            ];
+            
+            let isOpened = false;
+            let isAnimating = false;
+            
+            // 在這裡添加預加載函數代碼
+           function preloadImages() {
+                // 創建隱藏的預加載區域（如果不存在）
+                let preloadArea = document.getElementById('preloadArea');
+                if (!preloadArea) {
+                    preloadArea = document.createElement('div');
+                    preloadArea.id = 'preloadArea';
+                    preloadArea.style.position = 'absolute';
+                    preloadArea.style.width = '0';
+                    preloadArea.style.height = '0';
+                    preloadArea.style.overflow = 'hidden';
+                    preloadArea.style.visibility = 'hidden';
+                    document.body.appendChild(preloadArea);
+                }
+        
+                // 清空預加載區域
+                preloadArea.innerHTML = '';
+        
+                // 隨機選擇 5 張照片預加載
+                const indicesToPreload = [];
+                while (indicesToPreload.length < 5 && indicesToPreload.length < photoList.length) {
+                    const randomIndex = Math.floor(Math.random() * photoList.length);
+                    if (!indicesToPreload.includes(randomIndex)) {
+                        indicesToPreload.push(randomIndex);
+                    }
+                }
+        
+                // 預加載選定的照片
+                indicesToPreload.forEach(index => {
+                    const img = new Image();
+                    img.src = baseUrl + photoList[index];
+                    preloadArea.appendChild(img);
+                });
+            }
+
+            // 在頁面載入時預加載部分照片
+            preloadImages();
+
+            giftContainer.onclick = function() {
+                if (isAnimating) return;
+                if (isOpened) {
+                    resetGift();
+                }
+                openGift();
+            };
+            
+            function openGift() {
+                if (isAnimating) return;
+                isAnimating = true;
+                
+                clickMe.style.opacity = '0';
+                lidWithBow.style.transform = 'rotate(-110deg) translateY(-20px)';
+                
+                setTimeout(() => {
+                    // 添加加載指示器
+                    const loadingIndicator = document.createElement('div');
+                    loadingIndicator.className = 'loading-indicator';
+                    photoContainer.appendChild(loadingIndicator);
+        
+                    // 顯示照片容器
+                    photoContainer.classList.add('show');
+        
+                   // 選擇一張隨機照片
+                  let randomIndex;
+                  do {
+                     randomIndex = Math.floor(Math.random() * photoList.length);
+                  } while (randomIndex === lastPhotoIndex && photoList.length > 1);
+                  lastPhotoIndex = randomIndex;
+        
+                  const randomPhoto = photoList[randomIndex];
+        
+                  // 為照片添加加載事件
+                  birthdayPhoto.style.opacity = '0';
+                  birthdayPhoto.style.transition = 'opacity 0.3s ease-in-out';
+        
+                  birthdayPhoto.onload = function() {
+                      // 照片加載完成後移除加載指示器並顯示照片
+                      if (loadingIndicator.parentNode) {
+                          loadingIndicator.parentNode.removeChild(loadingIndicator);
+                      }
+                      birthdayPhoto.style.opacity = '1';
+                  };
+        
+                  birthdayPhoto.onerror = function() {
+                      // 照片加載失敗時處理
+                      if (loadingIndicator.parentNode) {
+                          loadingIndicator.parentNode.removeChild(loadingIndicator);
+                      }
+                      birthdayPhoto.src = '/api/placeholder/350/350';
+                      birthdayPhoto.style.opacity = '1';
+                  };
+        
+                  // 設置照片源
+                  birthdayPhoto.src = baseUrl + randomPhoto;
+              }, 800);
+                
+                for (let i = 0; i < 12; i++) {
+                    setTimeout(() => createBalloon(i), i * 100 + 300);
+                }
+                
+                setTimeout(() => {
+                    sprayConfetti();
+                }, 300);
+                
+                isOpened = true;
+                
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 2000);
+            }
+            
+            function resetGift() {
+                // 修改這一行，加入移除加載指示器
+                document.querySelectorAll('.balloon, .confetti, .loading-indicator').forEach(element => {
+                    element.remove();
+                });
+    
+                happyBirthday.style.opacity = '0';
+                happyBirthday.style.transform = 'translate(-50%, -50%) scale(0)';
+    
+                photoContainer.classList.remove('show');
+                birthdayPhoto.src = ''; // 清空照片
+    
+                lidWithBow.style.transform = '';
+                clickMe.style.opacity = '1';
+                isOpened = false;
+    
+                // 在這裡添加預加載新照片的代碼
+                setTimeout(preloadImages, 500);
+            }
+            
+            function createBalloon(i) {
+                const balloon = document.createElement('div');
+                balloon.classList.add('balloon');
+                balloon.style.background = balloonColors[i % balloonColors.length];
+                card.appendChild(balloon);
+                
+                const giftBoxRect = document.querySelector('.gift-box').getBoundingClientRect();
+                const cardRect = card.getBoundingClientRect();
+                const boxCenterX = giftBoxRect.left + giftBoxRect.width / 2 - cardRect.left;
+                const boxTop = giftBoxRect.top - cardRect.top + 20;
+                
+                const balloonWidth = 45;
+                let offsetDirection = (i % 2 === 0) ? 1 : -1;
+                let offsetDistance = 10 + (Math.floor(i / 2) * 15);
+                const offset = offsetDirection * offsetDistance + (Math.random() - 0.5) * 30;
+                
+                balloon.style.left = `${boxCenterX - balloonWidth/2 + offset}px`;
+                balloon.style.top = `${boxTop}px`;
+                balloon.style.setProperty('--x-move', `${offset * 2 + (Math.random() - 0.5) * 300}px`);
+                
+                requestAnimationFrame(() => {
+                    balloon.style.opacity = '1';
+                    balloon.style.animation = `floatUp ${10 + Math.random() * 15}s linear forwards`;
+                    balloon.style.animationDelay = `${i * 0.1 + Math.random() * 0.2}s`;
+                });
+                
+                setTimeout(() => {
+                    balloon.remove();
+                }, 25000);
+            }
+            
+            function sprayConfetti() {
+                const TOTAL_CONFETTI_COUNT = 100;
+                const BURST_POWER = 15;
+                const GRAVITY = 0.25;
+                const AIR_RESISTANCE = 0.98;
+                const BATCHES = 3;
+                const CONFETTI_PER_BATCH = Math.floor(TOTAL_CONFETTI_COUNT / BATCHES);
+                
+                const giftBoxRect = document.querySelector('.gift-box').getBoundingClientRect();
+                const cardRect = card.getBoundingClientRect();
+                const boxLeft = giftBoxRect.left - cardRect.left;
+                const boxWidth = giftBoxRect.width;
+                const boxCenterX = boxLeft + boxWidth / 2;
+                const boxTop = giftBoxRect.top - cardRect.top + 5;
+                
+                function createBatchConfetti(batchIndex) {
+                    const confettis = [];
+                    for (let i = 0; i < CONFETTI_PER_BATCH; i++) {
+                        const confetti = document.createElement('div');
+                        confetti.classList.add('confetti');
+                        const sizeMultiplier = batchIndex === 0 ? 1.2 : 1;
+                        const size = (3 + Math.random() * 5) * sizeMultiplier;
+                        confetti.style.width = `${size}px`;
+                        confetti.style.height = `${size}px`;
+                        
+                        const colorIndex = Math.floor(Math.random() * balloonColors.length);
+                        let baseColor;
+                        switch (colorIndex) {
+                            case 0: baseColor = '#FF5757'; break;
+                            case 1: baseColor = '#FF66C4'; break;
+                            case 2: baseColor = '#5D7CFF'; break;
+                            case 3: baseColor = '#38B6FF'; break;
+                            case 4: baseColor = '#8C52FF'; break;
+                            case 5: baseColor = '#5CE1E6'; break;
+                            case 6: baseColor = '#00C2A8'; break;
+                            case 7: baseColor = '#FF914D'; break;
+                            default: baseColor = '#FF5757';
+                        }
+                        confetti.style.background = baseColor;
+                        
+                        const shapes = ['circle', 'square', 'triangle'];
+                        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+                        if (shape === 'circle') {
+                            confetti.style.borderRadius = '50%';
+                        } else if (shape === 'triangle') {
+                            confetti.style.width = '0';
+                            confetti.style.height = '0';
+                            confetti.style.borderLeft = `${size/2}px solid transparent`;
+                            confetti.style.borderRight = `${size/2}px solid transparent`;
+                            confetti.style.borderBottom = `${size}px solid ${baseColor}`;
+                            confetti.style.background = 'transparent';
+                        }
+                        
+                        card.appendChild(confetti);
+                        const spreadFactor = 0.6 + (batchIndex * 0.2);
+                        const maxOffset = boxWidth * spreadFactor;
+                        const startX = boxCenterX + (Math.random() - 0.5) * maxOffset;
+                        confetti.style.left = `${Math.max(boxLeft, Math.min(boxLeft + boxWidth, startX))}px`;
+                        confetti.style.top = `${boxTop}px`;
+                        confetti.style.opacity = '0';
+                        
+                        const relativePosition = (startX - boxLeft) / boxWidth;
+                        let angle;
+                        if (relativePosition < 0.3) {
+                            angle = Math.PI * (0.7 + Math.random() * 0.2);
+                        } else if (relativePosition > 0.7) {
+                            angle = Math.PI * (0.1 + Math.random() * 0.2);
+                        } else {
+                            angle = Math.PI * (0.4 + Math.random() * 0.2);
+                        }
+                        
+                        const batchPowerFactor = 1 - (batchIndex * 0.2);
+                        const speed = Math.random() * BURST_POWER * batchPowerFactor * (0.7 + 0.6 * Math.random());
+                        const rotationSpeed = (Math.random() - 0.5) * 20;
+                        let vx = Math.cos(angle) * speed;
+                        let vy = -Math.sin(angle) * speed;
+                        
+                        confettis.push({
+                            element: confetti,
+                            x: parseFloat(confetti.style.left),
+                            y: parseFloat(confetti.style.top),
+                            vx: vx,
+                            vy: vy,
+                            rotation: 0,
+                            rotationSpeed: rotationSpeed
+                        });
+                    }
+                    
+                    requestAnimationFrame(() => {
+                        confettis.forEach(confetti => {
+                            confetti.element.style.opacity = '1';
+                        });
+                    });
+                    
+                    function animateConfetti() {
+                        let anyMoving = false;
+                        confettis.forEach(confetti => {
+                            confetti.x += confetti.vx;
+                            confetti.y += confetti.vy;
+                            confetti.rotation += confetti.rotationSpeed;
+                            confetti.vy += GRAVITY;
+                            confetti.vx *= AIR_RESISTANCE;
+                            confetti.vy *= AIR_RESISTANCE;
+                            confetti.element.style.transform = `translate(${confetti.x - parseFloat(confetti.element.style.left)}px, ${confetti.y - parseFloat(confetti.element.style.top)}px) rotate(${confetti.rotation}deg)`;
+                            if (Math.abs(confetti.vx) > 0.1 || Math.abs(confetti.vy) > 0.1) {
+                                anyMoving = true;
+                            }
+                            const cardHeight = card.clientHeight;
+                            if (confetti.y > cardHeight) {
+                                confetti.y = cardHeight;
+                                confetti.vy = 0;
+                                confetti.vx = 0;
+                                confetti.rotationSpeed = 0;
+                            }
+                        });
+                        if (anyMoving) {
+                            requestAnimationFrame(animateConfetti);
+                        }
+                    }
+                    animateConfetti();
+                    setTimeout(() => {
+                        confettis.forEach(confetti => {
+                            confetti.element.remove();
+                        });
+                    }, 10000);
+                }
+                
+                for (let batch = 0; batch < BATCHES; batch++) {
+                    setTimeout(() => {
+                        createBatchConfetti(batch);
+                    }, batch * 200);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
